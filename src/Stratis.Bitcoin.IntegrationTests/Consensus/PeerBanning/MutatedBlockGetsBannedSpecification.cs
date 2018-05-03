@@ -18,8 +18,9 @@ namespace Stratis.Bitcoin.IntegrationTests.Consensus.PeerBanning
             Given(two_nodes);
             And(some_coins_to_spend);
 
-            When(a_miner_creates_a_mutated_block_and_broadcasts_it);
-            And(another_miner_tries_to_validate_it);
+            When(a_malicious_node_creates_a_mutated_block);
+            And(the_malicious_node_broadcasts_the_bad_block_to_a_peer);
+            And(the_honest_peer_tries_to_sync_with_the_malicious_peer);
 
             Then(the_hash_of_the_rejected_block_should_not_be_banned);
             And(the_block_with_mutated_hash_should_be_ignored);
