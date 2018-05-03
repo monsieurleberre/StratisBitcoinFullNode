@@ -188,45 +188,45 @@ namespace Stratis.Bitcoin.IntegrationTests.EnvironmentMockUpHelpers
             }
         }
 
-        public CoreNode CreateNode(bool start = false)
+        public CoreNode CreateNode(bool start = false, string nodeName = null)
         {
-            var node = new CoreNode(this.GetNextDataFolderName(), new BitcoinCoreRunner(this.BitcoinD), this, Network.RegTest);
+            var node = new CoreNode(this.GetDataFolderName(nodeName), new BitcoinCoreRunner(this.BitcoinD), this, Network.RegTest);
             this.Nodes.Add(node);
             if (start)
                 node.Start();
             return node;
         }
 
-        public CoreNode CreateStratisPowNode(bool start = false, Action<IFullNodeBuilder> callback = null)
+        public CoreNode CreateStratisPowNode(bool start = false, Action<IFullNodeBuilder> callback = null, string nodeName = null)
         {
-            var node = new CoreNode(this.GetNextDataFolderName(), new StratisBitcoinPowRunner(callback), this, Network.RegTest);
+            var node = new CoreNode(this.GetDataFolderName(nodeName), new StratisBitcoinPowRunner(callback), this, Network.RegTest);
             this.Nodes.Add(node);
             if (start)
                 node.Start();
             return node;
         }
 
-        public CoreNode CreateStratisPowMiningNode(bool start = false, Action<IFullNodeBuilder> callback = null)
+        public CoreNode CreateStratisPowMiningNode(bool start = false, Action<IFullNodeBuilder> callback = null, string nodeName = null)
         {
-            var node = new CoreNode(this.GetNextDataFolderName(), new StratisProofOfWorkMiningNode(callback), this, Network.RegTest, configfile: "stratis.conf");
+            var node = new CoreNode(this.GetDataFolderName(nodeName), new StratisProofOfWorkMiningNode(callback), this, Network.RegTest, configfile: "stratis.conf");
             this.Nodes.Add(node);
             if (start)
                 node.Start();
             return node;
         }
 
-        public CoreNode CreateStratisPosNode(bool start = false, Action<IFullNodeBuilder> callback = null)
+        public CoreNode CreateStratisPosNode(bool start = false, Action<IFullNodeBuilder> callback = null, string nodeName = null)
         {
-            var node = new CoreNode(this.GetNextDataFolderName(), new StratisBitcoinPosRunner(callback), this, Network.RegTest, configfile: "stratis.conf");
+            var node = new CoreNode(this.GetDataFolderName(nodeName), new StratisBitcoinPosRunner(callback), this, Network.RegTest, configfile: "stratis.conf");
             this.Nodes.Add(node);
             if (start)
                 node.Start();
             return node;
         }
 
-        public CoreNode CreateStratisPosApiNode(bool start = false, Action<IFullNodeBuilder> callback = null)
+        public CoreNode CreateStratisPosApiNode(bool start = false, Action<IFullNodeBuilder> callback = null, string nodeName = null)
         {
-            var node = new CoreNode(this.GetNextDataFolderName(), new StratisPosApiRunner(callback), this, Network.RegTest, configfile: "stratis.conf");
+            var node = new CoreNode(this.GetDataFolderName(nodeName), new StratisPosApiRunner(callback), this, Network.RegTest, configfile: "stratis.conf");
             this.Nodes.Add(node);
             if (start)
                 node.Start();
@@ -241,11 +241,10 @@ namespace Stratis.Bitcoin.IntegrationTests.EnvironmentMockUpHelpers
             return node;
         }
 
-        private string GetNextDataFolderName()
+        private string GetDataFolderName(string subfolderName = null)
         {
-            var dataFolderName = Path.Combine(this.root, this.last.ToString());
-            this.last++;
-            return dataFolderName;
+            subfolderName = subfolderName ?? (++this.last).ToString();
+            return Path.Combine(this.root, subfolderName);
         }
 
         public void StartAll()
