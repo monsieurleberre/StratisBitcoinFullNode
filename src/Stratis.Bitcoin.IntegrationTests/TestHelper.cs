@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using Stratis.Bitcoin.Base;
 using Stratis.Bitcoin.IntegrationTests.EnvironmentMockUpHelpers;
@@ -9,12 +10,15 @@ namespace Stratis.Bitcoin.IntegrationTests
 {
     public class TestHelper
     {
-        public static void WaitLoop(Func<bool> act)
+        public static void WaitLoop(Func<bool> act, [CallerMemberName] string callerName = null)
         {
             var cancel = new CancellationTokenSource(Debugger.IsAttached ? 15 * 60 * 1000 : 30 * 1000);
             while (!act())
             {
-                cancel.Token.ThrowIfCancellationRequested();
+                if (cancel.Token.IsCancellationRequested)
+                {
+                    throw new OperationCanceledException(string.Format("WaitLoop was cancelled from method {0}", callerName));
+                }
                 Thread.Sleep(50);
             }
         }
