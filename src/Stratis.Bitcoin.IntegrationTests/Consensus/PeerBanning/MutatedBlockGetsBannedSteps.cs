@@ -90,6 +90,8 @@ namespace Stratis.Bitcoin.IntegrationTests.Consensus.PeerBanning
 
             this.MakeBlockValidatePow();
 
+            BlockUtils.CheckBlockIsMutated(this.mutatedBlock);
+
             await AddBlockToNodeChainWithoutValidation(this.maliciousNode, this.mutatedBlock);
         }
 
@@ -115,10 +117,12 @@ namespace Stratis.Bitcoin.IntegrationTests.Consensus.PeerBanning
         private void AddTransactionsWithDuplicate(Block latestBlock)
         {
             var transaction =
-                Tests.Common.Transactions.BuildNewTransactionFromExistingTransaction(latestBlock.Transactions.First());
+                Tests.Common.Transactions.BuildNewTransactionFromExistingTransaction(
+                    latestBlock.Transactions.First());
             this.mutatedBlock.AddTransaction(transaction);
             var duplicateTransaction =
-                Tests.Common.Transactions.BuildNewTransactionFromExistingTransaction(this.mutatedBlock.Transactions.First());
+                Tests.Common.Transactions.BuildNewTransactionFromExistingTransaction(
+                    this.mutatedBlock.Transactions.First());
             this.mutatedBlock.AddTransaction(duplicateTransaction);
             this.mutatedBlock.AddTransaction(duplicateTransaction);
         }
@@ -160,8 +164,10 @@ namespace Stratis.Bitcoin.IntegrationTests.Consensus.PeerBanning
         public void the_block_with_mutated_hash_should_be_ignored()
         {
             //which means the chain has not progressed
+            //this.validatorNode.FullNode.Chain.Height.Should()
+            //    .NotBe(this.latestChainedBlock.Height, "because it looks like currently the block get digested withouth checks");
             this.validatorNode.FullNode.Chain.Height.Should()
-                .NotBe(this.latestChainedBlock.Height, "because it looks like currently the block get digested withouth checks");
+                .Be(this.latestChainedBlock.Height);
         }
 
         public void the_hash_of_the_rejected_block_should_not_be_banned()
