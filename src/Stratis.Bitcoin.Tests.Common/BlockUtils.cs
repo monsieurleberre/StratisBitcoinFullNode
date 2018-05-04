@@ -3,7 +3,6 @@ using System.Linq;
 using FluentAssertions;
 using NBitcoin;
 using Stratis.Bitcoin.Features.Consensus.Rules.CommonRules;
-using Stratis.Bitcoin.Features.Miner;
 
 namespace Stratis.Bitcoin.Tests.Common
 {
