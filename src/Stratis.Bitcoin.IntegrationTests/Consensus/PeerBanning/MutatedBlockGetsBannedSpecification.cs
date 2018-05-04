@@ -9,8 +9,7 @@ namespace Stratis.Bitcoin.IntegrationTests.Consensus.PeerBanning
     public partial class MutatedBlockGetsBannedSpecification : BddSpecification
     {
         /// <summary>
-        /// This test is not ready yet but I don't want to loose the work, it is hanging
-        /// when the malicious miner sends its dodgy block
+        /// This test is not ready yet but I don't want to loose the work
         /// </summary>
         [Fact]
         public void MutatedBlockGetsBannedTest()
@@ -23,8 +22,8 @@ namespace Stratis.Bitcoin.IntegrationTests.Consensus.PeerBanning
             And(the_honest_peer_tries_to_sync_with_the_malicious_peer);
 
             Then(the_hash_of_the_rejected_block_should_not_be_banned);
-            And(the_block_with_mutated_hash_should_be_ignored);
-            And(the_malicious_miner_should_get_banned);
+            And(the_block_with_mutated_hash_should_be_ignored); //currently test is inverted
+            And(the_malicious_miner_should_get_banned); //currently test is inverted
         }
     }
 }

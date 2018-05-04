@@ -87,11 +87,11 @@ namespace NBitcoin
         /// <param name="expectedNetwork">The expected network to which it belongs</param>
         /// <returns>A BitcoinAddress or BitcoinScriptAddress</returns>
         /// <exception cref="System.FormatException">Invalid format</exception>
-        public static BitcoinAddress Create(string str, Network expectedNetwork = null)
+        public static BitcoinAddress Create(string base58, Network expectedNetwork = null)
         {
-            if(str == null)
-                throw new ArgumentNullException("base58");
-            return Network.Parse<BitcoinAddress>(str, expectedNetwork);
+            if(base58 == null)
+                throw new ArgumentNullException(nameof(base58));
+            return Network.Parse<BitcoinAddress>(base58, expectedNetwork);
         }
 
         public BitcoinAddress(string str, Network network)

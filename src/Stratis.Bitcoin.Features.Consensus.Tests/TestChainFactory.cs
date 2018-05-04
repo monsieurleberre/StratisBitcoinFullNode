@@ -155,7 +155,7 @@ namespace Stratis.Bitcoin.Features.Consensus.Tests
             TryFindNonceForProofOfWork(testChainContext, newBlock);
 
             if (!getMutatedBlock) await ValidateBlock(testChainContext, newBlock);
-            else BlockUtils.CheckBlockIsMutated(newBlock.Block);
+            else CheckBlockIsMutated(newBlock);
 
             return newBlock;
         }
@@ -196,6 +196,13 @@ namespace Stratis.Bitcoin.Features.Consensus.Tests
 
             if (maxTries == 0)
                 throw new XunitException("Test failed no blocks found");
+        }
+
+        private static void CheckBlockIsMutated(BlockTemplate newBlock)
+        {
+            var transactionHashes = newBlock.Block.Transactions.Select(t => t.GetHash()).ToList();
+            BlockMerkleRootRule.ComputeMerkleRoot(transactionHashes, out bool isMutated);
+            isMutated.Should().Be(true);
         }
 
         private static async Task ValidateBlock(TestChainContext testChainContext, BlockTemplate newBlock)
