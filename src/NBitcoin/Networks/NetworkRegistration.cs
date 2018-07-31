@@ -26,20 +26,26 @@ namespace NBitcoin.Networks
             if(existing != null)
                 return existing;
 
-            IEnumerable<string> networkNames = network.AdditionalNames != null ? new[] { network.Name }.Concat(network.AdditionalNames) : new[] { network.Name };
+            if (network.GetGenesis() == null)
+                throw new InvalidOperationException("A genesis block needs to be provided.");
 
-            foreach (string networkName in networkNames)
+            if (network.Consensus == null)
+                throw new InvalidOperationException("A consensus needs to be provided.");
+
+            IEnumerable<string> networkNames = new[] { network.Name }.Concat(network.AdditionalNames ?? new List<string>())
+                .Where(n => !string.IsNullOrWhiteSpace(n))
+                .Select(n => n.ToLowerInvariant())
+                .ToList();
+
+            if (!networkNames.Any())
+                throw new InvalidOperationException("A network name needs to be provided.");
+
+            lock (registeredNetworks)
             {
-                if (string.IsNullOrEmpty(networkName))
-                    throw new InvalidOperationException("A network name needs to be provided.");
-
-                if (network.GetGenesis() == null)
-                    throw new InvalidOperationException("A genesis block needs to be provided.");
-
-                if (network.Consensus == null)
-                    throw new InvalidOperationException("A consensus needs to be provided.");
-
-                registeredNetworks.TryAdd(networkName.ToLowerInvariant(), network);
+                foreach (string networkName in networkNames)
+                {
+                    registeredNetworks.TryAdd(networkName, network);
+                }
             }
 
             return network;
@@ -60,21 +66,13 @@ namespace NBitcoin.Networks
         /// <returns>The network or null of the name does not match any network.</returns>
         public static Network GetNetwork(string name)
         {
-            if (!registeredNetworks.Any())
-                return null;
-
             return registeredNetworks.TryGet(name.ToLowerInvariant());
         }
 
         public static IEnumerable<Network> GetNetworks()
         {
-            if (registeredNetworks.Any())
-            {
-                List<Network> others = registeredNetworks.Values.Distinct().ToList();
-
-                foreach (Network network in others)
-                    yield return network;
-            }
+            var registeredNetworksSnapshot = registeredNetworks.ToArray();
+            return registeredNetworksSnapshot.Select(p => p.Value).Distinct();
         }
 
         internal static Network GetNetworkFromBase58Data(string base58, Base58Type? expectedType = null)
