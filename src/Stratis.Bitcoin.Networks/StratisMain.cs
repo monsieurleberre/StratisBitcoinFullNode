@@ -55,7 +55,7 @@ namespace Stratis.Bitcoin.Networks
             this.GenesisVersion = 1;
             this.GenesisReward = Money.Zero;
 
-            Block genesisBlock = CreateStratisGenesisBlock(consensusFactory, this.GenesisTime, this.GenesisNonce, this.GenesisBits, this.GenesisVersion, this.GenesisReward);
+            Block genesisBlock = GenesisBuilder.CreateStratisGenesisBlock(consensusFactory, this.GenesisTime, this.GenesisNonce, this.GenesisBits, this.GenesisVersion, this.GenesisReward);
 
             this.Genesis = genesisBlock;
 
@@ -175,37 +175,6 @@ namespace Stratis.Bitcoin.Networks
 
             Assert(this.Consensus.HashGenesisBlock == uint256.Parse("0x0000066e91e46e5a264d42c89e1204963b2ee6be230b443e9159020539d972af"));
             Assert(this.Genesis.Header.HashMerkleRoot == uint256.Parse("0x65a26bc20b0351aebf05829daefa8f7db2f800623439f3c114257c91447f1518"));
-        }
-
-        protected static Block CreateStratisGenesisBlock(ConsensusFactory consensusFactory, uint nTime, uint nNonce, uint nBits, int nVersion, Money genesisReward)
-        {
-            string pszTimestamp = "http://www.theonion.com/article/olympics-head-priestess-slits-throat-official-rio--53466";
-
-            Transaction txNew = consensusFactory.CreateTransaction();
-            txNew.Version = 1;
-            txNew.Time = nTime;
-            txNew.AddInput(new TxIn()
-            {
-                ScriptSig = new Script(Op.GetPushOp(0), new Op()
-                {
-                    Code = (OpcodeType)0x1,
-                    PushData = new[] { (byte)42 }
-                }, Op.GetPushOp(Encoders.ASCII.DecodeData(pszTimestamp)))
-            });
-            txNew.AddOutput(new TxOut()
-            {
-                Value = genesisReward,
-            });
-
-            Block genesis = consensusFactory.CreateBlock();
-            genesis.Header.BlockTime = Utils.UnixTimeToDateTime(nTime);
-            genesis.Header.Bits = nBits;
-            genesis.Header.Nonce = nNonce;
-            genesis.Header.Version = nVersion;
-            genesis.Transactions.Add(txNew);
-            genesis.Header.HashPrevBlock = uint256.Zero;
-            genesis.UpdateMerkleRoot();
-            return genesis;
         }
     }
 }

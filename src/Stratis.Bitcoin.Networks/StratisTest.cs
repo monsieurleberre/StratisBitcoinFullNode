@@ -38,7 +38,7 @@ namespace Stratis.Bitcoin.Networks
             this.GenesisVersion = 1;
             this.GenesisReward = Money.Zero;
 
-            Block genesisBlock = CreateStratisGenesisBlock(consensusFactory, this.GenesisTime, this.GenesisNonce, this.GenesisBits, this.GenesisVersion, this.GenesisReward);
+            Block genesisBlock = GenesisBuilder.CreateStratisGenesisBlock(consensusFactory, this.GenesisTime, this.GenesisNonce, this.GenesisBits, this.GenesisVersion, this.GenesisReward);
             
             genesisBlock.Header.Time = 1493909211;
             genesisBlock.Header.Nonce = 2433759;

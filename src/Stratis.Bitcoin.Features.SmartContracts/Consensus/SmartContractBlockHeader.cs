@@ -1,5 +1,6 @@
 ﻿using NBitcoin;
 using Stratis.SmartContracts.Core;
+using Block = NBitcoin.Block;
 
 namespace Stratis.Bitcoin.Features.SmartContracts.Consensus
 {
@@ -39,6 +40,16 @@ namespace Stratis.Bitcoin.Features.SmartContracts.Consensus
             stream.ReadWrite(ref this.hashStateRoot);
             stream.ReadWrite(ref this.receiptRoot);
             stream.ReadWrite(ref this.logsBloom);
+        }
+
+        /// <summary>
+        /// Append the HashStateRoot to the genesis block of smart contract networks.
+        /// </summary>
+        /// <param name="genesisBlock">The genesis block of the smart contract network being generated.</param>
+        internal static void AddGenesisHashStateRoot(Block genesisBlock)
+        {
+            ((SmartContractBlockHeader)genesisBlock.Header).HashStateRoot = new uint256(
+                "21B463E3B52F6201C0AD6C991BE0485B6EF8C092E64583FFA655CC1B171FE856");
         }
     }
 }

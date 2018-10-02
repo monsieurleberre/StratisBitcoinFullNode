@@ -30,7 +30,7 @@ namespace Stratis.Bitcoin.Features.SmartContracts.Networks
 
             var consensusFactory = new SmartContractPosConsensusFactory();
 
-            this.Genesis = SmartContractNetwork.CreateGenesis(consensusFactory, 1296688602, 2, 0x207fffff, 1, Money.Coins(50m));
+            this.Genesis = GenesisBuilder.CreateSmashGenesis(consensusFactory, 1296688602, 2, 0x207fffff, 1, Money.Coins(50m), SmartContractBlockHeader.AddGenesisHashStateRoot);
 
             // Taken from StratisX.
             var consensusOptions = new PosConsensusOptions(
